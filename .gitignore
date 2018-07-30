@@ -1,0 +1,17 @@
+# web dir
+ui/logs
+web/upload/
+web/apps/
+web/txt/
+
+*.DS_Store
+*.swp
+*.swo
+logs/
+ui/config/database.php
+ui/config/redis.php
+ui/config/memcached.php
+ui/controllers/api/DbData.php
+ui/views/upload_form.php
+ui/views/upload_success.php
+ui/testPreSlotid.php
