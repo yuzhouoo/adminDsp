@@ -132,6 +132,7 @@ class ReportModel extends CI_Model{
 		switch($level){
 			case 'All':
 				$res = array();
+				$date = array();
 				foreach($data as $k => $v){
 					$accId = $v['account_id'];
 					$res[$accId]['account_id'] = $accId;
@@ -139,9 +140,11 @@ class ReportModel extends CI_Model{
 					$res[$accId]['click_num'] += $v['click_num'];
 					$res[$accId]['cpm'] += $v['cpm'];
 					$res[$accId]['spend'] += $v['spend'];
+					$date[$v['date']] = null;
 				}
 
 				foreach($res as $k => $v){
+					$res[$k]['cpm'] = round($v['cpm'] / count($date),2);
 					$res[$k]['adsMasterName'] = $this->getAdsMasterInfo($v['account_id'])[0];
 					$res[$k]['click_rate'] = (intval($v['exposure_num']) == 0) ? 0 : round($v['click_num']/$v['exposure_num']*100, 2);
 				}
@@ -149,6 +152,7 @@ class ReportModel extends CI_Model{
 				break;
 			case 'Acct':
 				$res = array();
+				$date = array();
 				foreach($data as $k => $v){
 					$proId = $v['pro_id'];
 					$res[$proId]['pro_id'] = $proId;
@@ -158,9 +162,11 @@ class ReportModel extends CI_Model{
 					$res[$proId]['click_num'] += $v['click_num'];
 					$res[$proId]['cpm'] += $v['cpm'];
 					$res[$proId]['spend'] += $v['spend'];
+					$date[$v['date']] = null;
 				}
 
 				foreach($res as $k => $v){
+					$res[$k]['cpm'] = round($v['cpm'] / count($date),2);
 					$res[$k]['adsMasterName'] = $this->getAdsMasterInfo($v['account_id'])[0];
 					$res[$k]['click_rate'] = (intval($v['exposure_num']) == 0) ? 0 : round($v['click_num']/$v['exposure_num']*100, 2);
 				}
@@ -177,18 +183,19 @@ class ReportModel extends CI_Model{
 				break;
 			case 'Days':
 				$res = array();
+				$date = array();
 				foreach($data as $k => $v){
-					$date = date("Y-m-d",strtotime($v['date']));
-					$res[$date]['date'] = $date;
-					$res[$date]['account_id'] = $v['account_id'];
-					$res[$date]['exposure_num'] += $v['exposure_num'];
-					$res[$date]['click_num'] += $v['click_num'];
-					$res[$date]['cpm'] += $v['cpm'];
-					$res[$date]['spend'] += $v['spend'];
+					$time = date("Y-m-d",strtotime($v['date']));
+					$res[$time]['date'] = $time;
+					$res[$time]['account_id'] = $v['account_id'];
+					$res[$time]['exposure_num'] += $v['exposure_num'];
+					$res[$time]['click_num'] += $v['click_num'];
+					$res[$time]['cpm'] += $v['cpm'];
+					$res[$time]['spend'] += $v['spend'];
+					$date[$time] = null;
 				}
-				$i = 1;
 				foreach($res as $k => $v){
-					$res[$k]['id'] = $i;
+					$res[$k]['cpm'] = round($v['cpm'] / count($date),2);
 					$res[$k]['adsMasterName'] = $this->getAdsMasterInfo($v['account_id'])[0];
 					$res[$k]['click_rate'] = (intval($v['exposure_num']) == 0) ? 0 : round($v['click_num']/$v['exposure_num']*100, 2);
 					$i++;
@@ -198,13 +205,15 @@ class ReportModel extends CI_Model{
 			case 'Curve':
 				$res = array();
 				$result = array();
+				$date = array();
 				foreach($data as $k => $v){
-					$date = date("Y-m-d",strtotime($v['date']));
-					$res[$date]['date'] = $date;
-					$res[$date]['exposure_num'] += $v['exposure_num'];
-					$res[$date]['click_num'] += $v['click_num'];
-					$res[$date]['cpm'] += $v['cpm'];
-					$res[$date]['spend'] += $v['spend'];
+					$time = date("Y-m-d",strtotime($v['date']));
+					$res[$time]['date'] = $time;
+					$res[$time]['exposure_num'] += $v['exposure_num'];
+					$res[$time]['click_num'] += $v['click_num'];
+					$res[$time]['cpm'] += $v['cpm'];
+					$res[$time]['spend'] += $v['spend'];
+					$date[$time] = null;
 				}
 
 				$i = 0;
@@ -213,7 +222,7 @@ class ReportModel extends CI_Model{
 					$result['exposureNum'][$i] = $v['exposure_num'];
 					$result['clickNum'][$i] = $v['click_num'];
 					$result['clickRate'][$i] = (intval($v['exposure_num']) == 0) ? 0 : round($v['click_num']/$v['exposure_num']*100, 2);
-					$result['cpm'][$i] = $v['cpm'];
+					$result['cpm'][$i] = round($v['cpm'] / count($date),2);
 					$result['spend'][$i] = $v['spend'];
 					$i++;
 				}
